@@ -13,59 +13,59 @@ import (
 // Delete At - delete at a position
 
 type LinkedList struct {
-	head   *Node
-	Length int
+	head *Node
+}
+
+func (l *LinkedList) isEmpty() bool {
+	return l.head == nil
 }
 
 func (l *LinkedList) InsertAt(position, value int) {
-	if position > l.Length {
-		fmt.Println("position can't be greater than length")
+	new := &Node{value: value}
+	if l.isEmpty() {
+		l.head = new
 		return
 	}
-	temp := &Node{value: value}
-	if l.head == nil {
-		l.head = temp
-		l.Length += 1
-		return
-	}
-
-	currNode := l.head
-	for index := 0; index < position-1; index++ {
-		if currNode == nil {
+	curr := l.head
+	for index := 0; index < position; index++ {
+		if curr.next == nil {
+			curr.next = new
 			return
 		}
-		currNode = currNode.next
+		if curr == nil {
+			break
+		}
+		curr = curr.next
 	}
-	temp.next = currNode.next
-	currNode.next = temp
-	l.Length += 1
-	l.PrintAll()
+
+	temp := &Node{next: curr.next, value: curr.value}
+	curr.value = new.value
+	curr.next = temp
 }
 
 func (l *LinkedList) DeleteAt(position int) {
-	if l.head == nil {
-		fmt.Println("empty list")
-		return
-	}
-	if position > l.Length {
-		fmt.Println("position can't be greater than length")
-		return
-	}
-	currNode := l.head
-	for index := 0; index < position-2; index++ {
-		if currNode == nil {
+	var prev *Node
+	curr := l.head
+	for index := 0; index < position; index++ {
+		prev = curr
+		if curr != nil {
+			curr = curr.next
+		}
+		if curr.next == nil {
+			prev.next = nil
 			return
 		}
-		currNode = currNode.next
 	}
-	currNode.value = currNode.next.value
-	currNode.next = currNode.next.next
-	l.Length -= 1
+	if prev != nil {
+		prev.next = curr.next
+	} else {
+		l.head = curr.next
+	}
 }
 
 func (l *LinkedList) PrintAll() {
 	currNode := l.head
-	if l.head == nil {
+	if l.isEmpty() {
 		fmt.Println("empty linked list")
 		return
 	}
@@ -74,4 +74,44 @@ func (l *LinkedList) PrintAll() {
 		currNode = currNode.next
 	}
 	fmt.Println("")
+}
+
+func (l *LinkedList) Exists(nodeValue int) (bool, int) {
+	currNode := l.head
+	position := 0
+	for currNode != nil {
+		if currNode.value == nodeValue {
+			return true, position
+		}
+		currNode = currNode.next
+		position++
+	}
+	return false, -1
+}
+
+func (l *LinkedList) Sort() {
+	current := l.head
+	for current != nil {
+		index := current.next
+		for index != nil {
+			if current.value > index.value {
+				temp := current.value
+				current.value = index.value
+				index.value = temp
+			} else {
+				index = index.next
+			}
+		}
+		current = current.next
+	}
+}
+
+func (l *LinkedList) Reverse() *LinkedList {
+	reversed := &LinkedList{}
+	curr := l.head
+	for curr != nil {
+		reversed.head = &Node{value: curr.value, next: reversed.head}
+		curr = curr.next
+	}
+	return reversed
 }
