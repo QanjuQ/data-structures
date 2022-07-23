@@ -1,7 +1,7 @@
 package linkedlist
 
 type Node struct {
-	value int
-	next  *Node
-	prev  *Node
+	Value int
+	Next  *Node
+	// Prev  *Node
 }
